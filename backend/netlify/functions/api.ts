@@ -8,6 +8,7 @@ import reviewsRouter from "../../src/routes/reviews";
 import teamRouter from "../../src/routes/teams";
 import sprintRouter from "../../src/routes/sprints";
 import studentRouter from "../../src/routes/students";
+import openaiRouter from "../../src/routes/openai";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/api/sprints", sprintRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/teams", teamRouter);
+app.use("/api/openai", openaiRouter);
 
 export const handler = serverless(app);
 

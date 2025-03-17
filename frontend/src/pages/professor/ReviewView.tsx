@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../api";
 import {
@@ -8,7 +8,6 @@ import {
   CardContent,
 } from "../../components/ui/card";
 import { ReviewGrid } from "../../components/ReviewGrid";
-import { Button } from "../../components/ui/button";
 import Spinner from "../../components/Spinner";
 import BackButton from "../../components/BackButton";
 
@@ -30,15 +29,6 @@ interface SprintReview {
 
 export default function ReviewView() {
   const { reviewId } = useParams<{ reviewId: string }>();
-  const navigate = useNavigate();
-
-  const handleBackClick = () => {
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      navigate("/", { replace: true });
-    }
-  };
 
   const { data: review, error, isLoading } = useQuery({
     queryKey: ["review", reviewId],
@@ -55,8 +45,7 @@ export default function ReviewView() {
       <Card className="w-full">
         <CardHeader className="text-center">
           <CardTitle>
-            Peer Reviews for {review?.reviewedTeammateId} - Sprint{" "}
-            {review?.sprintId}
+            {review?.reviewerId} reviewing {review?.reviewedTeammateId} - Sprint{" " + review?.sprintId}
           </CardTitle>
         </CardHeader>
         <CardContent>
