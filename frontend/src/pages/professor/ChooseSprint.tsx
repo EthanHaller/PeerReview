@@ -5,6 +5,7 @@ import { Card, CardContent } from "../../components/ui/card"
 import { useAuth } from "../../auth/useAuth"
 import BackButton from "../../components/BackButton"
 import Spinner from "../../components/Spinner"
+import StudentPerformance from "../../components/StudentPerformance"
 
 interface Sprint {
 	id: string
@@ -98,7 +99,7 @@ export default function ChooseSprint() {
 				<BackButton useNavigateBack />
 
 				<div className="mb-6">
-					<h2 className="text-xl font-semibold text-center">Performance Summary</h2>
+					<h2 className="text-2xl font-semibold text-center">Performance Summary</h2>
 					<Card className="mt-2">
 						<CardContent className="p-4">
 							{summaryLoading ? (
@@ -113,6 +114,8 @@ export default function ChooseSprint() {
 						</CardContent>
 					</Card>
 				</div>
+
+        <StudentPerformance />
 
 				<h1 className="text-2xl font-bold mb-2 text-center">Select a Sprint</h1>
 				<h2 className="text-lg text-muted-foreground text-center mb-4">View Sprint details for {computingID}</h2>

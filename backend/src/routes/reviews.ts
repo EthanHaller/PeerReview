@@ -294,6 +294,65 @@ const getReviewById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getAverageScoresBySprintAndCategory = async (req: Request, res: Response) => {
+  const { computingID } = req.params;
+  const sprintIds = ["3", "4", "5", "6", "7"];
+  const categories = [
+    "overallEvaluationScore",
+    "keptUpWithResponsibilities",
+    "communicatedEffectively",
+    "putInAppropriateTime",
+    "helpedTeamMembers",
+    "ideasTakenSeriously",
+    "compatibility",
+  ];
+
+  try {
+    const data: Record<string, Record<string, number>> = {};
+
+    for (const sprintId of sprintIds) {
+      const snapshot = await db
+        .collection("reviews")
+        .where("reviewedTeammateId", "==", computingID)
+        .where("sprintId", "==", sprintId)
+        .get();
+
+      const reviews = snapshot.docs.map((doc) => doc.data());
+
+      if (reviews.length === 0) continue;
+
+      const categoryAverages: Record<string, number> = {};
+      let hasValidScore = false;
+
+      for (const category of categories) {
+        const scores = reviews
+          .map((r: any) => {
+            const raw = r[category];
+            const parsed = typeof raw === "string" ? parseFloat(raw) : raw;
+            return isNaN(parsed) ? null : parsed;
+          })
+          .filter((v): v is number => v !== null);
+
+        if (scores.length > 0) {
+          categoryAverages[category] = scores.reduce((a, b) => a + b, 0) / scores.length;
+          hasValidScore = true;
+        }
+      }
+
+      if (hasValidScore) {
+        data[sprintId] = categoryAverages;
+      }
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Failed to calculate averages", error);
+    res.status(500).json({ message: "Failed to calculate averages" });
+  }
+};
+
+router.get("/averages/:computingID", authenticateUser, getAverageScoresBySprintAndCategory);
+
 router.get("/getReviews/:reviewerId/:sprintId", authenticateUser, getReviewsByReviewerAndSprint);
 
 router.post("/submitReview", authenticateUser, submitReview);
